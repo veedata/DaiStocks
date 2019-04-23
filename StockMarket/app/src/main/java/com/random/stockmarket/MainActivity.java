@@ -21,7 +21,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-
 public class MainActivity extends AppCompatActivity {
 
     EditText Scrip_Id;
@@ -39,90 +38,39 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Scrip_Id = (EditText)findViewById(R.id.text_scripCode);
-        Submit_Scrip_Id = (Button)findViewById(R.id.button_submitScripCode);
+        Scrip_Id = (EditText) findViewById(R.id.text_scripCode);
+        Submit_Scrip_Id = (Button) findViewById(R.id.button_submitScripCode);
 
         Submit_Scrip_Id.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
                 Scrip_Id_Str = Scrip_Id.getText().toString();
-                url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="+Scrip_Id_Str+"&outputsize=compact&apikey"+api_key;
+                url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="+Scrip_Id_Str+"&outputsize=compact&apikey="+api_key;
 
-//                String reply_data = getApiData(url);
-                OkHttpHandler okHttpHandler= new OkHttpHandler();
-                okHttpHandler.execute(url);
-//                Log.d("DATA",reply_data);
+                Log.d("Please",url);
+                AsyncTask run_async = new AsyncTask() {
+
+                    @Override
+                    protected Object doInBackground(Object[] objects) {
+
+                        Log.d("WHy","About to request");
+                        Request req = new Request.Builder()
+                                .url(url)
+                                .build();
+
+                        Response response = null;
+                        try {
+                            response = client.newCall(req).execute();
+                            String myResponse = response.body().string();
+                            Log.d("Please",myResponse);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Log.d("Please","It did something");
+                        }
+                        return null;
+                    }
+                };
             }
         });
-    }
-//just thread it now...
-
-//    String getApiData(String url) throws IOException {
-//
-//        int flag;
-//
-//        Request req = new Request.Builder()
-//                .url(url)
-//                .build();
-//
-
-//        try (Response response = client.newCall(req).execute()) {
-//            if (response.body() != null) {
-//                return response.body().string();
-//            }
-//            else{
-//                return "boohoo";
-//            }
-//        }
-
-
-
-//        client.newCall(req).enqueue(new Callback() {
-//            @Override
-//            public void onFailure(Call call, IOException e) {
-//                call.cancel();
-//            }
-//
-//            @Override
-//            public void onResponse(Call call, Response response) throws IOException {
-//
-//                final String myResponse = response.body().string();
-//
-//                MainActivity.this.runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        txtString.setText(myResponse);
-//                    }
-//                });
-//
-//            }
-//        });
-//    }
-
-    public class OkHttpHandler extends AsyncTask {
-
-        OkHttpClient client = new OkHttpClient();
-
-        @Override
-        protected String doInBackground(String...params) {
-
-            Request.Builder builder = new Request.Builder();
-            builder.url(params[0]);
-            Request request = builder.build();
-
-            try {
-                Response response = client.newCall(request).execute();
-                return response.body().string();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            api_data = s;
-        }
     }
 }
