@@ -8,17 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,7 +22,6 @@ public class MainActivity extends AppCompatActivity {
     //    String api_key = "api_key=2UFnLzxo9thEs-7XiBFQ";
     String api_key = "MC418AZHRV8XP2TI";
     String url = "";
-    OkHttpClient client = new OkHttpClient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -47,30 +37,33 @@ public class MainActivity extends AppCompatActivity {
                 Scrip_Id_Str = Scrip_Id.getText().toString();
                 url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="+Scrip_Id_Str+"&outputsize=compact&apikey="+api_key;
 
-                Log.d("Please",url);
-                AsyncTask run_async = new AsyncTask() {
-
-                    @Override
-                    protected Object doInBackground(Object[] objects) {
-
-                        Log.d("WHy","About to request");
-                        Request req = new Request.Builder()
-                                .url(url)
-                                .build();
-
-                        Response response = null;
-                        try {
-                            response = client.newCall(req).execute();
-                            String myResponse = response.body().string();
-                            Log.d("Please",myResponse);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            Log.d("Please","It did something");
-                        }
-                        return null;
-                    }
-                };
+                OkHttpHandler url_fetch = new OkHttpHandler();
+                url_fetch.execute(url);
             }
         });
+    }
+
+    public class OkHttpHandler extends AsyncTask<String, Void, String> {
+        OkHttpClient client = new OkHttpClient();
+        @Override
+        protected String doInBackground(String... params){
+            Request req = new Request.Builder()
+                    .url(url)
+                    .build();
+            try {
+                Response response = client.newCall(req).execute();
+                //Log.d("Output", "onPostExecute: "+response.body().string());
+                return response.body().string();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        protected void onPostExecute(String s) {
+            //super.onPostExecute(s);
+            String final_data_json = s;
+            Log.d("Output", final_data_json);
+        }
     }
 }
