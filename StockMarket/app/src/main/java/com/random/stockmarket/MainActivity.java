@@ -19,7 +19,6 @@ public class MainActivity extends AppCompatActivity {
     String Scrip_Id_Str;
     String api_data;
 
-    //    String api_key = "api_key=2UFnLzxo9thEs-7XiBFQ";
     String api_key = "MC418AZHRV8XP2TI";
     String url = "";
 
@@ -52,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
                     .build();
             try {
                 Response response = client.newCall(req).execute();
-                //Log.d("Output", "onPostExecute: "+response.body().string());
+//                Log.d("Output", "onPostExecute: "+response.body().string());
                 return response.body().string();
             }catch (Exception e){
                 e.printStackTrace();
@@ -61,9 +60,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(String s) {
-            //super.onPostExecute(s);
+//            super.onPostExecute(s);
             String final_data_json = s;
-            Log.d("Output", final_data_json);
+//            Log.d("Output", final_data_json);
         }
     }
 }
